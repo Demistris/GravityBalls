@@ -415,6 +415,8 @@ MonoBehaviour:
   ChangePhysics: 0
   _ballPrefab: {fileID: 7690915223011322235, guid: 02fb54f244bcbbf4aa4767d5196df5ab,
     type: 3}
+  _splitedBallPrefab: {fileID: 5807795267736954059, guid: a820fe4b1ed130c4c9ad5c7eccb464b9,
+    type: 3}
   _maxBalls: 250
 --- !u!1 &900363643
 GameObject:

@@ -1,13 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BallsCreator : MonoBehaviour
 {
     public int BallsCounter { get; private set; } = 0;
+    public BallPhysics SplittedBallPrefab => _splitedBallPrefab;
+
+    [HideInInspector]
     public bool ChangePhysics;
 
     [SerializeField] private BallPhysics _ballPrefab = null;
+    [SerializeField] private BallPhysics _splitedBallPrefab = null;
     [SerializeField] private int _maxBalls = 250;
 
     private void Start()

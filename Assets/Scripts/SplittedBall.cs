@@ -1,12 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class SplitedBall : MonoBehaviour
+public class SplittedBall : MonoBehaviour
 {
     [SerializeField] private Rigidbody _rigidBody = null;
     [SerializeField] private SphereCollider _collider = null;
-    [SerializeField] private float _speed = 0f;
+    [SerializeField] private float _speed = 100f;
 
     private void Start()
     {
