@@ -412,8 +412,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec249b0e0baa0fb46b6a8369f6809096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ballPrefab: {fileID: 1452545070746147910, guid: 02fb54f244bcbbf4aa4767d5196df5ab,
+  ChangePhysics: 0
+  _ballPrefab: {fileID: 7690915223011322235, guid: 02fb54f244bcbbf4aa4767d5196df5ab,
     type: 3}
+  _maxBalls: 250
 --- !u!1 &900363643
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,7 +578,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 30
   orthographic: 0
   orthographic size: 5
   m_Depth: -1

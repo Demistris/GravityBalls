@@ -1,45 +1,51 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BallPhysics : MonoBehaviour
 {
-    public float GravityRange => _gravityRange;
 
-    private Rigidbody _rb;
-    private float _gravityRange = 100f;
+    public float GravityRange { get; private set; } = 100f;
+
+    [SerializeField] private BallPhysics _splitedBallPrefab = null;
+    [SerializeField] private Rigidbody _rigidBody = null;
+
     private bool _isDestroyed;
+    private BallsCreator _ballsCreator;
 
-    private void Start()
+    private float _speed = 100f;
+    private int _maxMass = 50;
+    private int _howManyBallsMarged = 1;
+
+    public void Initialize(BallsCreator ballsCreator)
     {
-        _rb = GetComponent<Rigidbody>();
+        _ballsCreator = ballsCreator;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         AddPhysics();
     }
 
     private void AddPhysics()
     {
-        Collider[] otherBalls = Physics.OverlapSphere(transform.position, _gravityRange);
-        List<Rigidbody> rigidBodyList = new List<Rigidbody>();
+        Collider[] otherBalls = Physics.OverlapSphere(transform.position, GravityRange);
 
-        foreach (Collider balls in otherBalls)
+        foreach (Collider otherBall in otherBalls)
         {
-            Rigidbody rb = balls.attachedRigidbody;
-            if (rb != null && rb != _rb && !rigidBodyList.Contains(rb))
+            Rigidbody otherBallRigidBody = otherBall.attachedRigidbody;
+            if (otherBallRigidBody != _rigidBody)
             {
-                rigidBodyList.Add(rb);
-                Vector3 offset = transform.position - balls.transform.position;
+                Vector3 offset = transform.position - otherBall.transform.position;
 
-                if (BallsCreator.ChangePhysics == false)
+                if (_ballsCreator.ChangePhysics == false)
                 {
-                    rb.AddForce(offset / offset.sqrMagnitude * _rb.mass * 100);
+                    otherBallRigidBody.AddForce(offset / offset.sqrMagnitude * _rigidBody.mass * _speed);
                 }
                 else
                 {
-                    rb.AddExplosionForce(10, new Vector3(transform.position.x, transform.position.y, transform.position.z), _gravityRange);
+                    otherBallRigidBody.AddExplosionForce(50f, new Vector3(transform.position.x, transform.position.y, transform.position.z), GravityRange);
                 }
             }
         }
@@ -47,7 +53,9 @@ public class BallPhysics : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (BallsCreator.ChangePhysics == false)
+
+
+        if (_ballsCreator.ChangePhysics == false)
         {
             if (!collision.gameObject.GetComponent<BallPhysics>()._isDestroyed)
             {
@@ -56,10 +64,28 @@ public class BallPhysics : MonoBehaviour
             }
             else
             {
-                _rb.mass += collision.rigidbody.mass;
-                _gravityRange += collision.gameObject.GetComponent<BallPhysics>().GravityRange;
+                _rigidBody.mass += collision.rigidbody.mass;
+                GravityRange += collision.gameObject.GetComponent<BallPhysics>().GravityRange;
+                _howManyBallsMarged += collision.gameObject.GetComponent<BallPhysics>()._howManyBallsMarged;
                 gameObject.transform.localScale += collision.transform.localScale;
+
+                CheckIfSplitBall();
             }
+        }
+    }
+
+    private void CheckIfSplitBall()
+    {
+        if(_rigidBody.mass >= _maxMass)
+        {
+            for (int i = 0; i < _howManyBallsMarged; i++)
+            {
+                var splitedBallPrefab = Instantiate(_splitedBallPrefab, transform.position, transform.rotation, gameObject.transform.parent);
+                splitedBallPrefab.Initialize(_ballsCreator);
+            }
+
+            _rigidBody.mass = 1;
+            Destroy(gameObject);
         }
     }
 }
